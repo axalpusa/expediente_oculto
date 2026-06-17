@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Expediente Oculto — Circuito de Investigación</title>
+<title>Expediente Oculto — Proyecto Educativo de Investigación</title>
+<meta name="description" content="Simulación educativa y juego de gamificación sobre investigación periodística y transparencia pública.">
+<meta name="robots" content="index, follow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Special+Elite&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -145,18 +147,17 @@ h2{font-family:'Oswald';font-weight:600;text-transform:uppercase;letter-spacing:
   background:rgba(0,0,0,.55);color:#e7e9ea;font-size:12px;padding:6px 12px;border-radius:20px;
   display:flex;gap:6px;align-items:center;animation:bob 1.4s ease-in-out infinite;pointer-events:none}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
-.tweet{padding:14px;border-bottom:1px solid #25282c;color:#e7e9ea}
-.tw-head{display:flex;gap:10px;align-items:center}
-.tw-ava{width:42px;height:42px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,#b53024,#f5d547);
+.post{padding:14px;border-bottom:1px solid #25282c;color:#e7e9ea}
+.post-head{display:flex;gap:10px;align-items:center}
+.post-ava{width:42px;height:42px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,#b53024,#f5d547);
   display:flex;align-items:center;justify-content:center;font-size:20px;background-size:cover;background-position:center}
-.tw-name{font-weight:700;font-size:14px;display:flex;align-items:center;gap:4px}
-.tw-name .v{color:#1d9bf0}
-.tw-handle{color:#71767b;font-size:13px}
-.tw-body{font-size:14.5px;line-height:1.5;margin:10px 0;color:#e7e9ea}
-.tw-body .htag{color:#1d9bf0}
-.tw-img{height:170px;border-radius:14px;margin-top:6px}
-.tw-stats{display:flex;gap:22px;color:#71767b;font-size:12.5px;margin-top:10px}
-.tw.flag{box-shadow:inset 3px 0 0 var(--red)}
+.post-name{font-weight:700;font-size:14px;display:flex;align-items:center;gap:4px}
+.post-handle{color:#71767b;font-size:13px}
+.post-body{font-size:14.5px;line-height:1.5;margin:10px 0;color:#e7e9ea}
+.post-body .htag{color:var(--hl)}
+.post-img{height:170px;border-radius:14px;margin-top:6px}
+.post-stats{display:flex;gap:22px;color:#71767b;font-size:12.5px;margin-top:10px}
+.post.flag{box-shadow:inset 3px 0 0 var(--red)}
 .flag-pill{display:inline-block;background:rgba(181,48,36,.15);color:#ff6b5e;font-size:11px;
   font-weight:700;padding:2px 8px;border-radius:20px;margin-top:8px}
 
@@ -404,30 +405,30 @@ h2{font-family:'Oswald';font-weight:600;text-transform:uppercase;letter-spacing:
           <div class="phone-screen" id="phoneScreen">
             <div class="phone-bar"><span class="back">‹</span> #TeatroPiura</div>
 
-            <div class="tweet">
-              <div class="tw-head"><div class="tw-ava">🏛️</div><div><div class="tw-name">Cultura Piura</div><div class="tw-handle">@CulturaPiura · 3 h</div></div></div>
-              <div class="tw-body">Seguimos esperando un espacio digno para los artistas de la ciudad. El Teatro Municipal lleva años en obras. <span class="htag">#TeatroPiura</span></div>
-              <div class="tw-stats"><span>💬 120</span><span>🔁 340</span><span>❤️ 980</span></div>
+            <div class="post">
+              <div class="post-head"><div class="post-ava">🏛️</div><div><div class="post-name">Cultura Piura</div><div class="post-handle">@CulturaPiura · 3 h</div></div></div>
+              <div class="post-body">Seguimos esperando un espacio digno para los artistas de la ciudad. El Teatro Municipal lleva años en obras. <span class="htag">#TeatroPiura</span></div>
+              <div class="post-stats"><span>💬 120</span><span>🔁 340</span><span>❤️ 980</span></div>
             </div>
 
-            <div class="tweet tw flag">
-              <div class="tw-head"><div class="tw-ava" data-img="post">📱</div><div><div class="tw-name">Piura Denuncia Noticias <span class="v">✔</span></div><div class="tw-handle">@PiuraDenunciaNoticias · 1 h</div></div></div>
-              <div class="tw-body">¡URGENTE! Nos pasaron el dato desde adentro de la Municipalidad. Dicen que en la reconstrucción del Teatro Municipal van a gastar <b>S/ 100,000,000.00</b> de nuestros impuestos y que prometen terminar ¡en solo <b>12 meses</b>! ⏳ ¿Alguien cree que una obra de 100 millones se hace en 12 meses en Piura? Esto huele mal. <span class="htag">#TeatroPiura #TransparenciaYa</span></div>
-              <div class="img tw-img" data-img="postimg" style="border-radius:14px"><div class="ph"><span class="ic">🖼️</span><span>Imagen adjunta al post</span><code>IMAGES.postimg</code></div></div>
+            <div class="post post flag">
+              <div class="post-head"><div class="post-ava" data-img="post">📱</div><div><div class="post-name">Piura Denuncia Noticias</div><div class="post-handle">@PiuraDenunciaNoticias · 1 h</div></div></div>
+              <div class="post-body">¡URGENTE! Nos pasaron el dato desde adentro de la Municipalidad. Dicen que en la reconstrucción del Teatro Municipal van a gastar <b>S/ 100,000,000.00</b> de nuestros impuestos y que prometen terminar ¡en solo <b>12 meses</b>! ⏳ ¿Alguien cree que una obra de 100 millones se hace en 12 meses en Piura? Esto huele mal. <span class="htag">#TeatroPiura #TransparenciaYa</span></div>
+              <div class="img post-img" data-img="postimg" style="border-radius:14px"><div class="ph"><span class="ic">🖼️</span><span>Imagen adjunta al post</span><code>IMAGES.postimg</code></div></div>
               <span class="flag-pill">⚑ Marca esta publicación para verificar</span>
-              <div class="tw-stats"><span>💬 842</span><span>🔁 5.1K</span><span>❤️ 12.3K</span></div>
+              <div class="post-stats"><span>💬 842</span><span>🔁 5.1K</span><span>❤️ 12.3K</span></div>
             </div>
 
-            <div class="tweet">
-              <div class="tw-head"><div class="tw-ava">👤</div><div><div class="tw-name">Vecino del Centro</div><div class="tw-handle">@vecino_piura · 45 min</div></div></div>
-              <div class="tw-body">¿100 millones? ¿De dónde sacan esa cifra? Alguien que verifique con documentos oficiales, por favor. 🤔</div>
-              <div class="tw-stats"><span>💬 64</span><span>🔁 210</span><span>❤️ 520</span></div>
+            <div class="post">
+              <div class="post-head"><div class="post-ava">👤</div><div><div class="post-name">Vecino del Centro</div><div class="post-handle">@vecino_piura · 45 min</div></div></div>
+              <div class="post-body">¿100 millones? ¿De dónde sacan esa cifra? Alguien que verifique con documentos oficiales, por favor. 🤔</div>
+              <div class="post-stats"><span>💬 64</span><span>🔁 210</span><span>❤️ 520</span></div>
             </div>
 
-            <div class="tweet">
-              <div class="tw-head"><div class="tw-ava">📰</div><div><div class="tw-name">Redacción</div><div class="tw-handle">@redaccion · ahora</div></div></div>
-              <div class="tw-body">Nota interna: pedir el expediente técnico vía Ley de Transparencia y contrastar monto y plazo antes de publicar nada.</div>
-              <div class="tw-stats"><span>💬 8</span><span>🔁 12</span><span>❤️ 40</span></div>
+            <div class="post">
+              <div class="post-head"><div class="post-ava">📰</div><div><div class="post-name">Redacción</div><div class="post-handle">@redaccion · ahora</div></div></div>
+              <div class="post-body">Nota interna: pedir el expediente técnico vía Ley de Transparencia y contrastar monto y plazo antes de publicar nada.</div>
+              <div class="post-stats"><span>💬 8</span><span>🔁 12</span><span>❤️ 40</span></div>
             </div>
 
             <div class="scroll-cue" id="scrollCue">↓ Desliza para ver más</div>
