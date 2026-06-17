@@ -324,14 +324,72 @@ h2{font-family:'Oswald';font-weight:600;text-transform:uppercase;letter-spacing:
 .weblink .wl-txt b{font-family:'Oswald';text-transform:uppercase;letter-spacing:.06em;font-size:14px;
   color:var(--hl);display:block;margin-bottom:4px}
 .weblink .wl-txt a{color:#cdc2ac;font-size:13px;word-break:break-all}
+
+/* ---------- NUEVOS ESTILOS: MEJORA INTEGRAL ---------- */
+.stats-bar{display:flex;gap:20px;align-items:center;background:rgba(20,16,12,.6);padding:8px 16px;border-radius:30px;border:1px solid rgba(232,217,184,.15);margin-bottom:15px}
+.stat-item{display:flex;align-items:center;gap:8px;font-family:'Oswald';text-transform:uppercase;font-size:12px;letter-spacing:.05em}
+.stat-item b{color:var(--hl)}
+.reputation-track{width:100px;height:6px;background:rgba(0,0,0,.3);border-radius:3px;overflow:hidden}
+.reputation-fill{height:100%;background:var(--green);transition:width .5s ease}
+
+.inventory-tray{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:100;display:flex;gap:10px;background:rgba(30,24,18,.9);padding:10px 20px;border-radius:40px;border:1px solid var(--manila-dark);box-shadow:0 10px 30px var(--shadow);backdrop-filter:blur(8px);transition:transform .3s ease,opacity .3s ease}
+.inventory-tray.empty{opacity:0;pointer-events:none;transform:translateX(-50%) translateY(20px)}
+.inv-item{width:40px;height:40px;background:var(--paper);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 4px 8px var(--shadow);position:relative}
+.inv-item::after{content:attr(data-tooltip);position:absolute;bottom:50px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;font-size:10px;padding:4px 8px;border-radius:4px;white-space:nowrap;opacity:0;pointer-events:none;transition:.2s;font-family:'Oswald'}
+.inv-item:hover::after{opacity:1;bottom:55px}
+
+.editor-msg{position:fixed;top:80px;right:20px;width:280px;z-index:200;background:var(--paper);color:#1a1813;border-radius:12px;padding:15px;box-shadow:0 15px 40px var(--shadow);border-left:5px solid var(--red);animation:slideInMsg .4s ease both;font-family:'Inter',sans-serif;font-size:13.5px;line-height:1.4}
+.editor-msg .who{display:block;font-family:'Oswald';text-transform:uppercase;color:var(--red);font-size:11px;letter-spacing:.1em;margin-bottom:5px}
+.editor-msg .close{position:absolute;top:8px;right:10px;cursor:pointer;opacity:.5}
+@keyframes slideInMsg{from{opacity:0;transform:translateX(50px)}to{opacity:1;transform:none}}
+
+.flash-effect{position:fixed;inset:0;background:#fff;z-index:9999;pointer-events:none;opacity:0}
+.flash-anim{animation:flashTrigger .6s ease-out}
+@keyframes flashTrigger{0%{opacity:0}10%{opacity:.8}100%{opacity:0}}
+
+.typewriter{overflow:hidden;border-right:2px solid var(--hl);white-space:nowrap;animation:typing 2s steps(40,end),blink-caret .75s step-end infinite}
+@keyframes typing{from{width:0}to{width:100%}}
+@keyframes blink-caret{from,to{border-color:transparent}50%{border-color:var(--hl)}}
+
+.headline-card{background:var(--paper);color:#1a1813;padding:20px;border-radius:4px;margin-bottom:15px;cursor:pointer;transition:.2s;border:2px solid transparent;position:relative}
+.headline-card:hover{transform:translateY(-3px);box-shadow:0 8px 20px var(--shadow)}
+.headline-card.selected{border-color:var(--red);background:#fff}
+.headline-card .type{font-family:'Oswald';font-size:10px;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;display:block}
+.headline-card.sensa .type{color:var(--red)}.headline-card.rigor .type{color:var(--green)}
+.headline-card h3{font-family:'Special Elite';font-size:18px;line-height:1.3}
+
+.social-feed{background:#15171a;border-radius:12px;overflow:hidden;margin-top:20px}
+.comment{padding:12px 16px;border-bottom:1px solid #25282c;display:flex;gap:12px}
+.comment .ava{width:32px;height:32px;border-radius:50%;background:var(--steel2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px}
+.comment .c-body{font-size:13px;line-height:1.4}
+.comment .c-user{font-weight:700;margin-right:6px}
+.comment .c-txt{color:#e7e9ea}
+
 </style>
 </head>
 <body>
 <div class="app">
 
+  <!-- Efecto Flash -->
+  <div class="flash-effect" id="flash"></div>
+
+  <!-- Barra de Notificaciones Editor Jefe -->
+  <div id="editorSpace"></div>
+
+  <!-- Inventario Flotante -->
+  <div class="inventory-tray empty" id="inventoryTray"></div>
+
   <div class="topbar">
     <div class="brand"><span class="dot"></span> Expediente Oculto · Redacción de Investigación</div>
     <div class="steps" id="stepsBar"></div>
+  </div>
+
+  <!-- Barra de Reputación y Estado -->
+  <div class="stats-bar hidden" id="statsBar">
+    <div class="stat-item">Rigor Periodístico: <b id="repVal">100%</b>
+      <div class="reputation-track"><div class="reputation-fill" id="repFill" style="width:100%"></div></div>
+    </div>
+    <div class="stat-item" id="timeCounter" style="margin-left:auto">Edición: <b id="timer">--:--</b></div>
   </div>
 
   <!-- ============ MENU (imagen de fondo) ============ -->
@@ -609,14 +667,47 @@ h2{font-family:'Oswald';font-weight:600;text-transform:uppercase;letter-spacing:
     <div class="btnrow"><button class="btn ghost" onclick="go('s2c')">← Releer el informe</button></div>
   </section>
 
+  <!-- ============ FASE 3A — SELECCIÓN DE TITULAR ============ -->
+  <section class="screen" id="scr-s3a">
+    <div class="eyebrow">Fase 3 · El Destape</div>
+    <h2>Cierre de edición: Elige tu titular</h2>
+    <p class="lead">La investigación está completa. ¿Cómo quieres presentar esta historia al mundo? Tu elección afectará el impacto social.</p>
+    <div class="panel">
+      <div class="headline-card sensa" onclick="selectHeadline('sensa')">
+        <span class="type">Titular Sensacionalista</span>
+        <h3>¡ESCÁNDALO TOTAL EN PIURA! ROBO DE MILLONES EN EL TEATRO Y OBRA EN RUINAS</h3>
+      </div>
+      <div class="headline-card rigor" onclick="selectHeadline('rigor')">
+        <span class="type">Titular Riguroso</span>
+        <h3>INFORME DE CONTROL REVELA SERIAS DEFICIENCIAS Y RETRASOS EN EL TEATRO DE PIURA</h3>
+      </div>
+    </div>
+    <div class="btnrow" style="justify-content:center">
+      <button class="btn gold disabled" id="publishBtn" onclick="publishNews()">Publicar reportaje 📨</button>
+    </div>
+  </section>
+
+  <!-- ============ FASE 3B — IMPACTO SOCIAL ============ -->
+  <section class="screen" id="scr-s3b">
+    <div class="eyebrow">Fase 3 · Reacción Ciudadana</div>
+    <h2>Impacto de la publicación</h2>
+    <p class="lead">Tu reportaje está circulando. Mira cómo reacciona la comunidad en tiempo real.</p>
+    <div class="panel social-feed" id="socialFeed">
+      <!-- Comentarios generados dinámicamente -->
+    </div>
+    <div class="btnrow" style="justify-content:center">
+      <button class="btn" onclick="go('final')">Ver acreditación final →</button>
+    </div>
+  </section>
+
   <!-- ============ FINAL ============ -->
   <section class="screen" id="scr-final">
     <div class="final-wrap">
       <div class="success">
-        <div class="seal">📰</div>
-        <div class="eyebrow" style="margin-top:10px">Despacho periodístico enviado</div>
-        <h2 style="color:var(--green)">¡Investigación cerrada!</h2>
-        <p class="lead" style="margin:10px auto 0">Gracias a tu despacho, la ciudadanía de Piura ya sabe qué ocurre detrás de las mallas de seguridad. Conserva tu credencial de prensa como recuerdo del destape.</p>
+        <div class="seal" id="finalSeal">📰</div>
+        <div class="eyebrow" style="margin-top:10px">Carrera periodística</div>
+        <h2 id="finalTitle">¡Investigación cerrada!</h2>
+        <p class="lead" id="finalLead" style="margin:10px auto 0">Gracias a tu despacho, la ciudadanía de Piura ya sabe qué ocurre detrás de las mallas de seguridad.</p>
       </div>
       <div class="credential">
         <div class="cred-top"><span>Prensa · Acreditación</span><span>Expediente Oculto</span></div>
@@ -626,17 +717,9 @@ h2{font-family:'Oswald';font-weight:600;text-transform:uppercase;letter-spacing:
             <b>Reportero/a de investigación</b>
             <div class="nm">Equipo Teatro Piura</div>
             <div class="row">Caso: CUI 2523322</div>
-            <div class="row">Estado: Investigación cerrada ✔</div>
-            <div class="row">Hallazgo: S/ 90.7M · 16 meses</div>
+            <div class="row">Reputación: <span id="finalRep">100%</span></div>
+            <div class="row">Hallazgo: S/ 90.7M · Verificado ✔</div>
           </div>
-        </div>
-      </div>
-      <div class="weblink">
-        <div class="qr" id="qrBox"></div>
-        <div class="wl-txt">
-          <b>Lee el impacto del reportaje</b>
-          <a href="#" onclick="return false;">www.teatromunicipalpiura-investigacion.pe</a><br>
-          <span style="color:var(--steel2);font-size:12px">Escanea o visita la web para el seguimiento del caso.</span>
         </div>
       </div>
       <div class="btnrow" style="justify-content:center"><button class="btn" onclick="restart()">↺ Volver al menú</button></div>
@@ -669,6 +752,77 @@ var IMAGES = {
 };
 /* ▲▲▲  FIN DE LA CONFIGURACIÓN  ▲▲▲ */
 
+/* ---------- ESTADO GLOBAL Y MEJORAS ---------- */
+var gameState = {
+  reputation: 100,
+  inventory: [],
+  timer: null,
+  seconds: 0,
+  selectedHeadline: null,
+  isTimerRunning: false
+};
+
+function updateReputation(change) {
+  gameState.reputation = Math.max(0, Math.min(100, gameState.reputation + change));
+  var fill = document.getElementById('repFill');
+  var val = document.getElementById('repVal');
+  if(fill) fill.style.width = gameState.reputation + '%';
+  if(val) val.textContent = gameState.reputation + '%';
+  if(gameState.reputation < 50) fill.style.background = 'var(--red)';
+  else if(gameState.reputation < 80) fill.style.background = 'var(--hl)';
+  else fill.style.background = 'var(--green)';
+}
+
+function addToInventory(id, icon, name) {
+  if (gameState.inventory.includes(id)) return;
+  gameState.inventory.push(id);
+  var tray = document.getElementById('inventoryTray');
+  tray.classList.remove('empty');
+  var item = document.createElement('div');
+  item.className = 'inv-item';
+  item.setAttribute('data-tooltip', name);
+  item.innerHTML = icon;
+  tray.appendChild(item);
+  triggerFlash();
+}
+
+function triggerFlash() {
+  var f = document.getElementById('flash');
+  f.classList.remove('flash-anim');
+  void f.offsetWidth;
+  f.classList.add('flash-anim');
+}
+
+function notifyEditor(msg) {
+  var space = document.getElementById('editorSpace');
+  var id = 'msg-' + Date.now();
+  space.innerHTML = `
+    <div class="editor-msg" id="${id}">
+      <span class="close" onclick="this.parentElement.remove()">×</span>
+      <span class="who">Editor Jefe · Urgente</span>
+      ${msg}
+    </div>
+  `;
+  setTimeout(() => { 
+    var m = document.getElementById(id);
+    if(m) m.style.opacity = '0';
+    setTimeout(() => { if(m) m.remove(); }, 500);
+  }, 6000);
+}
+
+function startTimer() {
+  if (gameState.isTimerRunning) return;
+  gameState.isTimerRunning = true;
+  gameState.seconds = 0;
+  gameState.timer = setInterval(() => {
+    gameState.seconds++;
+    var m = Math.floor(gameState.seconds / 60);
+    var s = gameState.seconds % 60;
+    document.getElementById('timer').textContent = 
+      (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+  }, 1000);
+}
+
 /* ---------- aplicar imágenes ---------- */
 function loadImages(){
   document.querySelectorAll('[data-img]').forEach(function(box){
@@ -687,17 +841,64 @@ function loadImages(){
    ===================================================================== */
 var STEP_OF={intro:'Briefing',s1a:'Estación 1',s1b:'Estación 1',s1c:'Estación 1',
   s1d:'Estación 1',s1ok:'Estación 1 ✔',s2a:'Estación 2',s2b:'Estación 2',
-  s2c:'Estación 2',s2d:'Estación 2',final:'Cierre ✔'};
+  s2c:'Estación 2',s2d:'Estación 2',s3a:'Fase 3',s3b:'Impacto',final:'Cierre ✔'};
+
 function go(scr){
   document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active')});
   var el=document.getElementById('scr-'+scr);if(el)el.classList.add('active');
   window.scrollTo({top:0,behavior:'smooth'});
+  
   var bar=document.getElementById('stepsBar');
   bar.innerHTML=STEP_OF[scr]?('Fase: <b>&nbsp;'+STEP_OF[scr]+'</b>'):'';
-  if(scr==='s1c')renderFC();
-  if(scr==='s1a')resetPhoneCue();
+
+  // Mostrar/Ocultar barra de estadísticas
+  var sBar = document.getElementById('statsBar');
+  if(['menu', 'howto', 'intro', 'final'].includes(scr)) sBar.classList.add('hidden');
+  else sBar.classList.remove('hidden');
+
+  if(scr==='s1a') {
+    startTimer();
+    notifyEditor("¡Escucha! Ese post viral está incendiando la ciudad. Necesito que verifiques esos 100 millones AHORA.");
+  }
+  if(scr==='s1c') renderFC();
+  if(scr==='s2a') notifyEditor("Bien hecho con el CUI. Ahora estamos en el terreno. Busca cualquier papel que hayan dejado los obreros.");
+  if(scr==='s3a') {
+    clearInterval(gameState.timer);
+    notifyEditor("¡Tengo la rotativa lista! Elige un titular. Tu reputación depende de qué tan fiel seas a la verdad.");
+  }
+  if(scr==='final') finalizeGame();
 }
+
+function finalizeGame() {
+  document.getElementById('finalRep').textContent = gameState.reputation + '%';
+  var title = document.getElementById('finalTitle');
+  var lead = document.getElementById('finalLead');
+  var seal = document.getElementById('finalSeal');
+
+  if (gameState.reputation >= 90) {
+    title.textContent = "¡Pulitzer Local!";
+    lead.textContent = "Tu rigor ha sido impecable. Has expuesto la verdad con una precisión quirúrgica. Piura te lo agradece.";
+    seal.textContent = "🏆";
+  } else if (gameState.reputation >= 60) {
+    title.textContent = "Buen Reportaje";
+    lead.textContent = "Lograste informar a la ciudadanía, aunque algunos detalles quedaron en el aire. Buen trabajo, colega.";
+    seal.textContent = "📰";
+  } else {
+    title.textContent = "Periodismo Cuestionable";
+    lead.textContent = "La noticia salió, pero tu falta de rigor ha dañado tu credibilidad. La verdad merece más cuidado.";
+    seal.textContent = "⚠️";
+  }
+}
+
 function restart(){
+  gameState.reputation = 100;
+  gameState.inventory = [];
+  gameState.isTimerRunning = false;
+  clearInterval(gameState.timer);
+  document.getElementById('inventoryTray').innerHTML = '';
+  document.getElementById('inventoryTray').classList.add('empty');
+  updateReputation(0);
+  
   evOpened={};document.getElementById('s1bNext').disabled=true;
   document.querySelectorAll('.evcard').forEach(function(c){c.classList.remove('open');
     c.querySelector('.reveal').innerHTML='Toca para revelar el dato resaltado…';
@@ -785,15 +986,18 @@ function onClaimDrop(card,zone){
   var i=card.getAttribute('data-claim');
   var z=zone.getAttribute('data-zone'); // V o F
   if(CLAIMS[i].ans===z){
-    // correcto: fijar en la zona
     card.classList.add('placed');
     card.style.cursor='default';
     card.innerHTML='<span class="n">'+(parseInt(i)+1)+'.</span>'+CLAIMS[i].t+'<span class="ev">✓ '+CLAIMS[i].ev+'</span>';
     zone.appendChild(card);
     fcCorrect++;updateFCStatus();
-    if(fcCorrect>=3)document.getElementById('fcNext').disabled=false;
+    if(fcCorrect>=3) {
+      document.getElementById('fcNext').disabled=false;
+      addToInventory('desmentido', '📱', 'Post Desmentido');
+    }
   }else{
-    // incorrecto: rebote y shake
+    updateReputation(-10);
+    notifyEditor("¡Cuidado! Si publicamos datos falsos perderemos toda credibilidad.");
     card.classList.add('wrong');
     setTimeout(function(){card.classList.remove('wrong')},420);
   }
@@ -844,7 +1048,10 @@ function makeDraggable(el,onDrop){
 }
 function zoneUnder(x,y){
   var elAt=document.elementFromPoint(x,y);
-  while(elAt){if(elAt.classList&&elAt.classList.contains('dropzone'))return elAt;elAt=elAt.parentNode;}
+  while(elAt){
+    if(elAt.classList && (elAt.classList.contains('dropzone') || elAt.classList.contains('pizarra'))) return elAt;
+    elAt=elAt.parentNode;
+  }
   return null;
 }
 
@@ -854,6 +1061,7 @@ function zoneUnder(x,y){
 function checkCUI(){
   var v=document.getElementById('cuiInput').value.trim();
   if(v==='2523322'){setMsg('cuiMsg','✔ Código validado · luz verde encendida','ok');
+    addToInventory('llave', '🗝️', 'Llave de la obra');
     setTimeout(function(){go('s1ok')},650);}
   else{setMsg('cuiMsg','✘ Código incorrecto. Revisa la Pista A.','err');}
 }
@@ -870,6 +1078,10 @@ function dig(el,what){
   found[what]=true;el.classList.add('found');
   el.innerHTML=(what==='factura'?'<span class="ico">📄</span>¡Factura hallada!':'<span class="ico">📐</span>¡Planos hallados!')+'<span class="badge">✓</span>';
   document.getElementById('chip-'+what).className='chip got';
+  
+  if(what==='factura') addToInventory('factura', '📄', 'Factura');
+  if(what==='planos') addToInventory('planos', '📐', 'Planos');
+
   if(found.factura&&found.planos)document.getElementById('s2aNext').disabled=false;
 }
 function rebindSpots(){
@@ -915,6 +1127,7 @@ function showAuditor(){
     '</div>';
   if(IMAGES.auditor){var ab=box.querySelector('[data-img="auditor"]');ab.style.backgroundImage="url('"+IMAGES.auditor+"')";ab.classList.add('has-img');}
   document.getElementById('s2bNext').classList.remove('hidden');
+  addToInventory('informe', '🦺', 'Informe Contraloría');
 }
 function resetPizarra(){
   pzPlaced={factura:false,planos:false};
@@ -935,12 +1148,69 @@ function checkDespacho(){
   var okInv=(parseFloat(inv)===3.5),okDel=(parseFloat(del)===0.8);
   document.getElementById('cellInv').classList.toggle('ok',okInv);
   document.getElementById('cellDel').classList.toggle('ok',okDel);
-  if(okInv&&okDel){setMsg('despMsg','✔ Datos verificados · publicando reportaje…','ok');
-    setTimeout(function(){go('final')},700);}
-  else{var p=[];if(!okInv)p.push('metros invadidos');if(!okDel)p.push('% de retraso');
-    setMsg('despMsg','✘ Revisa: '+p.join(' y ')+'. Las cifras están en el informe (3.5 y 0.8).','err');}
+  if(okInv&&okDel){setMsg('despMsg','✔ Datos verificados · preparando cierre de edición…','ok');
+    setTimeout(function(){go('s3a')},700);}
+  else{
+    updateReputation(-5);
+    var p=[];if(!okInv)p.push('metros invadidos');if(!okDel)p.push('% de retraso');
+    setMsg('despMsg','✘ Revisa: '+p.join(' y ')+'. Las cifras están en el informe (3.5 y 0.8).','err');
+  }
 }
 document.getElementById('delInput').addEventListener('keydown',function(e){if(e.key==='Enter')checkDespacho();});
+
+/* =====================================================================
+   FASE 3 — EL DESTAPE
+   ===================================================================== */
+function selectHeadline(type) {
+  gameState.selectedHeadline = type;
+  document.querySelectorAll('.headline-card').forEach(c => c.classList.remove('selected'));
+  document.querySelector('.headline-card.' + type).classList.add('selected');
+  document.getElementById('publishBtn').classList.remove('disabled');
+}
+
+function publishNews() {
+  if (!gameState.selectedHeadline) return;
+  if (gameState.selectedHeadline === 'sensa') updateReputation(-20);
+  else updateReputation(10);
+  
+  go('s3b');
+  generateComments(gameState.selectedHeadline);
+}
+
+function generateComments(type) {
+  var feed = document.getElementById('socialFeed');
+  feed.innerHTML = '';
+  var comments = [];
+  if (type === 'sensa') {
+    comments = [
+      {u: "Pedro Piura", t: "¡Lo sabía! ¡Se están robando todo! 😡"},
+      {u: "Ana M.", t: "Un poco exagerado el titular, ¿no? Pero la obra sí está mal."},
+      {u: "Juan L.", t: "¡Cierren la municipalidad ya! #Indignación"}
+    ];
+  } else {
+    comments = [
+      {u: "Prensa Seria", t: "Excelente reporte técnico. Por fin cifras claras sobre la invasión del terreno."},
+      {u: "Vecino Observador", t: "3.5 metros invadidos... con razón no avanzaba el muro. Gracias por informar."},
+      {u: "Artes Piura", t: "Necesitamos que la Contraloría intervenga más seguido. Riguroso informe."}
+    ];
+  }
+  
+  comments.forEach((c, i) => {
+    setTimeout(() => {
+      var div = document.createElement('div');
+      div.className = 'comment';
+      div.innerHTML = `
+        <div class="ava">${c.u[0]}</div>
+        <div class="c-body">
+          <span class="c-user">${c.u}</span>
+          <p class="c-txt">${c.t}</p>
+        </div>
+      `;
+      feed.appendChild(div);
+      window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'});
+    }, i * 1500);
+  });
+}
 
 /* =====================================================================
    QR decorativo (final)
