@@ -1216,7 +1216,9 @@ function generateComments(type) {
    QR decorativo (final)
    ===================================================================== */
 function drawQR(){
-  var box=document.getElementById('qrBox');var n=11,cell=74/n,svg='<svg viewBox="0 0 74 74" width="74" height="74">';
+  var box=document.getElementById('qrBox');
+  if(!box) return; // Seguridad: si el elemento no existe, no hacer nada
+  var n=11,cell=74/n,svg='<svg viewBox="0 0 74 74" width="74" height="74">';
   var seed=7;function rnd(){seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff;}
   for(var y=0;y<n;y++)for(var x=0;x<n;x++){
     var fill=rnd()>0.5;var corner=(x<3&&y<3)||(x>n-4&&y<3)||(x<3&&y>n-4);
