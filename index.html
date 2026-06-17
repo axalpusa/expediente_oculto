@@ -683,7 +683,7 @@ h2{font-family:'Oswald';font-weight:600;text-transform:uppercase;letter-spacing:
       </div>
     </div>
     <div class="btnrow" style="justify-content:center">
-      <button class="btn gold disabled" id="publishBtn" onclick="publishNews()">Publicar reportaje 📨</button>
+      <button class="btn gold" id="publishBtn" disabled onclick="publishNews()">Publicar reportaje 📨</button>
     </div>
   </section>
 
@@ -1165,7 +1165,7 @@ function selectHeadline(type) {
   gameState.selectedHeadline = type;
   document.querySelectorAll('.headline-card').forEach(c => c.classList.remove('selected'));
   document.querySelector('.headline-card.' + type).classList.add('selected');
-  document.getElementById('publishBtn').classList.remove('disabled');
+  document.getElementById('publishBtn').disabled = false;
 }
 
 function publishNews() {
